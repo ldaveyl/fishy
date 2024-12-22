@@ -1,20 +1,17 @@
-local Player = require("player")
-local Input = require("input")
-local State = require("state")
+local Game = require("game")
 
--- Delegate pressed keys to Input module
-function love.keypressed(key)
-    Input.key_pressed(key)
+function love.load()
+    NewGame = Game:new()
 end
 
--- function love.load()
--- end
-
 function love.update(dt)
-    Player.update(dt)
-    State.update()
+    NewGame:update(dt)
 end
 
 function love.draw()
-    Player.draw()
+    NewGame:draw()
+end
+
+function love.keypressed(key)
+    NewGame:keypressed(key)
 end

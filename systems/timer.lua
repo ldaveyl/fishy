@@ -1,14 +1,14 @@
 local Timer = {}
 
 function Timer:new(duration, on_finish)
-    local t = {
+    local timer = {
         duration = duration,
         time_left = duration,
         on_finish = on_finish or function() end
     }
-    setmetatable(t, self)
+    setmetatable(timer, self)
     self.__index = self
-    return t
+    return timer
 end
 
 function Timer:start()
