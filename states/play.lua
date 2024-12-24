@@ -1,14 +1,15 @@
+local CooldownBar = require("ui.cooldown")
 local Input = require("input")
 local Player = require("entities.player")
-local Cooldown = require("ui.cooldown")
 local Utils = require("utils")
 
 local PlayState = {}
 
 function PlayState:new()
     local play_state = {
+        id = "play",
         player = Player:new(),
-        cooldown = Cooldown:new()
+        cooldown_bar = CooldownBar:new()
     }
     setmetatable(play_state, self)
     self.__index = self
@@ -20,7 +21,7 @@ function PlayState:update(dt)
     self.player:update(dt)
 
     -- Update cooldown UI
-    local frac = self.cooldown.max_value
+    local frac = self.cooldown_bar.max_value
     if self.player.boost_active_timer.active then
         frac = Utils.clamp(self.player.boost_active_timer.time_left / self.player.boost_active_timer.duration, 0, 1)
     elseif self.player.boost_cd_timer.active then
@@ -28,15 +29,15 @@ function PlayState:update(dt)
     end
 
     -- Clamp fraction
-    self.cooldown:update(frac)
+    self.cooldown_bar:update(frac)
 end
 
 function PlayState:draw()
     self.player:draw()
-    self.cooldown:draw()
+    self.cooldown_bar:draw()
 end
 
-function PlayState:keypressed(key)
+function PlayState:key_pressed(key)
     Input.key_pressed(key)
 end
 
