@@ -1,5 +1,5 @@
 local Button = require("ui.button")
-local PlayState = require("states.play")
+-- local PlayState = require("states.play")
 
 local MenuState = {}
 
@@ -9,17 +9,37 @@ function MenuState:new()
         title = "Main Menu",
     }
 
-    -- Add buttons to menu
-    local window_height = love.graphics.getHeight()
-    local window_width = love.graphics.getWidth()
+    local button_width = Window_Width * 0.5
+    local button_height = Window_Height * 0.2
+    local button_margin = 0.03 * Window_Height
+    local button_x = (Window_Width * 0.5) - (button_width * 0.5)
+    local button_y = (Window_Height * 0.5) - (button_height * 0.5)
 
+    local buttons = {
+        Button:new(
+            button_x,
+            button_y - button_height - button_margin,
+            button_width,
+            button_height,
+            "Play"
+        ),
+        Button:new(
+            button_x,
+            button_y,
+            button_width,
+            button_height,
+            "Options"
+        ),
+        Button:new(
+            button_x,
+            button_y + button_height + button_margin,
+            button_width,
+            button_height,
+            "Quit"
+        )
+    }
 
-    -- Button:new(
-    --     window_width * 0.5,
-    --     window_height * 0.5
-    -- )
-
-
+    menu_state.buttons = buttons
 
     setmetatable(menu_state, self)
     self.__index = self
@@ -36,12 +56,10 @@ function MenuState:key_pressed(key)
 end
 
 function MenuState:draw()
-    love.graphics.printf(self.title, 0, love.graphics.getHeight() / 2, love.graphics.getWidth(), "center")
-
-    -- Create buttons
-    -- local buttons = {
-    --     Button:new()
-    -- }
+    -- love.graphics.printf(self.title, 0, love.graphics.getHeight() / 2, love.graphics.getWidth(), "center")
+    for _, button in ipairs(self.buttons) do
+        button:draw()
+    end
 end
 
 return MenuState
