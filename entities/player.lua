@@ -1,6 +1,6 @@
 -- local Cooldown = require("ui/cooldown")
 local Entity = require("entities.entity")
-local Input = require("input")
+local Input = require("systems.input")
 local Timer = require("systems.timer")
 local Utils = require("utils")
 
@@ -79,7 +79,7 @@ function Player:update(dt)
     local velocity = math.sqrt(self.vx ^ 2 + self.vy ^ 2)
 
     -- Trigger boost
-    if Input.was_pressed("lshift") and self.can_use_boost then
+    if Input.key_was_pressed("lshift") and self.can_use_boost then
         self.boost_active_timer:start()
         print("Boost activate timer started!")
     end

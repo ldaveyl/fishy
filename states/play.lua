@@ -1,5 +1,5 @@
 local CooldownBar = require("ui.cooldown")
-local Input = require("input")
+local Input = require("systems.input")
 local Player = require("entities.player")
 local Utils = require("utils")
 

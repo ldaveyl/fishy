@@ -1,5 +1,5 @@
 local Button = require("ui.button")
--- local PlayState = require("states.play")
+local Input = require("systems.input")
 
 local MenuState = {}
 
@@ -15,51 +15,56 @@ function MenuState:new()
     local button_x = (Window_Width * 0.5) - (button_width * 0.5)
     local button_y = (Window_Height * 0.5) - (button_height * 0.5)
 
-    local buttons = {
-        Button:new(
-            button_x,
-            button_y - button_height - button_margin,
-            button_width,
-            button_height,
-            "Play"
-        ),
-        Button:new(
-            button_x,
-            button_y,
-            button_width,
-            button_height,
-            "Options"
-        ),
-        Button:new(
-            button_x,
-            button_y + button_height + button_margin,
-            button_width,
-            button_height,
-            "Quit"
-        )
-    }
+    menu_state.play_button = Button:new(
+        button_x,
+        button_y - button_height - button_margin,
+        button_width,
+        button_height,
+        "Play"
+    )
+    menu_state.options_button = Button:new(
+        button_x,
+        button_y,
+        button_width,
+        button_height,
+        "Options"
+    )
+    menu_state.quit_button = Button:new(
+        button_x,
+        button_y + button_height + button_margin,
+        button_width,
+        button_height,
+        "Quit"
+    )
 
-    menu_state.buttons = buttons
+
 
     setmetatable(menu_state, self)
     self.__index = self
     return menu_state
 end
 
-function MenuState:update(dt)
+function MenuState:update(_)
+    -- Detect if the left mouse button was pressed this frame
+    local mouse_pressed = Input.mouse_was_pressed(1)
+
+    -- Update all buttons
+    self.play_button:update(mouse_pressed)
+    self.options_button:update(mouse_pressed)
+    self.quit_button:update(mouse_pressed)
+
+    -- Clear mouse pressed state after processing all updates
+    Input.clear_mouse_pressed(1)
 end
 
 function MenuState:key_pressed(key)
-    if key == "return" then
-        print("YES")
-    end
+    Input.key_pressed(key)
 end
 
 function MenuState:draw()
-    -- love.graphics.printf(self.title, 0, love.graphics.getHeight() / 2, love.graphics.getWidth(), "center")
-    for _, button in ipairs(self.buttons) do
-        button:draw()
-    end
+    self.play_button:draw()
+    self.options_button:draw()
+    self.quit_button:draw()
 end
 
 return MenuState
