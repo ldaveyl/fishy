@@ -1,15 +1,15 @@
-local Bar = require("ui.bar")
-local Utils = require("utils")
+local Bar = require "ui.bar"
+local Utils = require "utils"
 
 local CooldownBar = {}
 
 setmetatable(CooldownBar, { __index = Bar })
 
 function CooldownBar:new()
-    local CooldownBar = Bar:new(50, 50, 200, 20, 1, 1)
-    setmetatable(CooldownBar, self)
+    local cooldown_bar = Bar:new(50, 50, 200, 20, 1, 1)
+    setmetatable(cooldown_bar, self)
     self.__index = self
-    return CooldownBar
+    return cooldown_bar
 end
 
 function CooldownBar:update(current_value)

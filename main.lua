@@ -1,31 +1,40 @@
-local Input = require("systems.input")
-local Game = require("game")
+local Input = require "systems.input"
+local Enemy = require "entities.enemy"
+local Game = require "game"
+local PlayState = require "states.play"
 
 function love.load()
-    -- -- Graphics parameters
-    Font = love.graphics.newFont("assets/fonts/ARIALBD.TTF", 64, "none", 2)
-    Window_Height = love.graphics.getHeight()
-    Window_Width = love.graphics.getWidth()
+    -- Set debug mode
+    DEBUG = true
+
+    -- Seed math.random (otherwise random numbers are the same for every game)
+    math.randomseed(os.time())
+
+    -- Graphics parameters
+    FONT = love.graphics.newFont("assets/fonts/ARIALBD.TTF", 64, "none", 2)
+    WH = love.graphics.getHeight()
+    WW = love.graphics.getWidth()
 
     -- Create a new game
-    NewGame = Game:new()
+    GAME = Game:new(PlayState:new())
 end
 
 function love.update(dt)
     -- Update game
-    NewGame:update(dt)
+    GAME:update(dt)
 end
 
 function love.draw()
-    NewGame:draw()
+    -- Draw game
+    GAME:draw()
 end
 
--- Detect key presses
 function love.keypressed(key)
-    NewGame:key_pressed(key)
+    -- Detect key presses and send to game
+    GAME:key_pressed(key)
 end
 
--- Detect mouse clicks
 function love.mousepressed(x, y, button, istouch, presses)
-    NewGame:mouse_pressed(button)
+    -- Detect mouse clicks and send to game
+    GAME:mouse_pressed(button)
 end

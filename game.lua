@@ -1,12 +1,12 @@
-local Input = require("systems.input")
-local MenuState = require("states.menu")
-local PlayState = require("states.play")
+local Input = require "systems.input"
+local MenuState = require "states.menu"
+local PlayState = require "states.play"
 
 local Game = {}
 
 function Game:new(state)
     local game = {
-        -- Create a new game, by default starts in Menu
+        -- Default state is the menu
         state = state or MenuState:new()
     }
     setmetatable(game, self)
@@ -15,22 +15,27 @@ function Game:new(state)
 end
 
 function Game:update(dt)
+    -- Update current state
     self.state:update(dt)
 
-    -- Start playing game
-    if self.state.id == "menu" and self.state.play_button.pressed then
-        self:change_state(PlayState:new())
-    end
+    -- -- Start game if play button is pressed
+    -- if getmetatable(self.state) == MenuState and self.state.play_button.pressed then
+    --     self:change_state(PlayState:new())
+    -- end
 end
 
 function Game:draw()
+    -- Draw game
     self.state:draw()
 end
 
 function Game:key_pressed(key)
+    -- Quit the game if Escape if pressed regardless of current state
     if key == "escape" then
         love.event.quit()
     end
+
+    -- Send key presses to current state
     self.state:key_pressed(key)
 end
 

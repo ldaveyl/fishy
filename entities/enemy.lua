@@ -1,12 +1,19 @@
+local Entity = require "entities.entity"
+
 local Enemy = {}
 
-function Enemy:new(x, y)
-    local t = {
+setmetatable(Enemy, { __index = Entity })
 
-    }
-    setmetatable(t, self)
+function Enemy:new(x, y, sx, sy, vx, vy, img)
+    local enemy = Entity:new(x, y, sx, sy, vx, vy, img)
+    setmetatable(enemy, self)
     self.__index = self
-    return t
+    return enemy
+end
+
+function Enemy:update(dt)
+    -- Set position
+    self:update_position(dt)
 end
 
 return Enemy

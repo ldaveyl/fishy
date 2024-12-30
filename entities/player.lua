@@ -1,8 +1,7 @@
--- local Cooldown = require("ui/cooldown")
-local Entity = require("entities.entity")
-local Input = require("systems.input")
-local Timer = require("systems.timer")
-local Utils = require("utils")
+local Entity = require "entities.entity"
+local Input = require "systems.input"
+local Timer = require "systems.timer"
+local Utils = require "utils"
 
 local Player = {}
 
@@ -97,40 +96,11 @@ function Player:update(dt)
     end
 
     -- Update position
-    self.x = self.x + self.vx * dt
-    self.y = self.y + self.vy * dt
+    self:update_position(dt)
 
     -- Update timers
     self.boost_active_timer:update(dt)
     self.boost_cd_timer:update(dt)
 end
 
-function Player:draw()
-    -- Get width and height of image
-    local width = self.img:getWidth()
-    local height = self.img:getHeight()
-
-    -- Draw Player
-    love.graphics.draw(self.img, self.x, self.y, self.angle, self.sx, self.sy, width / 2, height / 2)
-end
-
 return Player
-
-
---     -- Update boost timer UI
---     local cooldown_fraction = 1 - (boost_cooldown_timer.time_left / boost_cooldown_timer.duration)
---     Cooldown.update(cooldown_fraction)
--- end
-
--- function Player:draw()
---     print("x " .. self.x)
---     -- Get width and height of image
---     local width = self.img:getWidth()
---     local height = self.img:getHeight()
-
--- -- Draw Player
--- love.graphics.draw(self.img, self.x, self.y, self.angle,
---     self.sx, self.sy, width / 2, height / 2)
--- end
-
--- return Player

@@ -1,5 +1,4 @@
-local Input = require("systems.input")
-local PlayState = require("states.play")
+local Input = require "systems.input"
 
 local Button = {}
 
@@ -21,7 +20,6 @@ function Button:new(x, y, width, height, text)
         width = width,
         height = height,
         text = text,
-        pressed = false
     }
     setmetatable(button, self)
     self.__index = self
@@ -49,12 +47,12 @@ function Button:draw()
     love.graphics.rectangle("fill", self.x, self.y, self.width, self.height)
 
     -- Text
-    local text_width = Font:getWidth(self.text)
-    local text_height = Font:getHeight(self.text)
+    local text_width = FONT:getWidth(self.text)
+    local text_height = FONT:getHeight(self.text)
     love.graphics.setColor(button_text_color)
     love.graphics.print(
         self.text,
-        Font,
+        FONT,
         self.x + (self.width * 0.5) - (text_width * 0.5),
         self.y + (self.height * 0.5) - (text_height * 0.5)
     )
