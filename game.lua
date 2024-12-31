@@ -17,11 +17,6 @@ end
 function Game:update(dt)
     -- Update current state
     self.state:update(dt)
-
-    -- -- Start game if play button is pressed
-    -- if getmetatable(self.state) == MenuState and self.state.play_button.pressed then
-    --     self:change_state(PlayState:new())
-    -- end
 end
 
 function Game:draw()

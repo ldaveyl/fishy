@@ -7,25 +7,40 @@ local Player = {}
 
 setmetatable(Player, { __index = Entity })
 
-function Player:new()
-    -- Instance player as new entity
-    local player = Entity:new(400, 200, 0.2, 0.2, 0, 0, love.graphics.newImage("assets/images/fish2.png"))
+function Player:new(world)
+    -- Define player vars
+    local x = WW / 2
+    local y = WH / 2
+    local sx = 0.2
+    local sy = 0.2
+    local vx = 0
+    local vy = 0
+    local img = love.graphics.newImage("assets/images/fish2.png")
+    local body = love.physics.newBody(world, x, y, "dynamic")
+    local shape = love.physics.newCircleShape(50)
+    local fixture = love.physics.newFixture(body, shape)
+    fixture:setUserData("Player") -- Set ID of fixture
+
+    -- Creat player
+    local player = Entity:new(x, y, sx, sy, vx, vy, img, world, body, shape, fixture)
 
     -- Add additional properties
-    player.max_v = 1000
-    player.max_v_boost = 2000
-    player.acceleration = 2000
-    player.friction = 2
-    player.boost_time = 0.1
-    player.boost_time_cd = 3
-    player.can_use_boost = true
+    player.max_v = 1000         -- Max velocity
+    player.max_v_boost = 2000   -- Max velocity during boost
+    player.acceleration = 2000  -- Acceleration
+    player.friction = 2         -- Friction
+    player.boost_time = 0.1     -- Boost time
+    player.boost_time_cd = 3    -- Boost time cooldown
+    player.can_use_boost = true -- Track if boost can be used
+
+    -- Set physics
 
     -- Create timer for boost cooldown
     player.boost_cd_timer = Timer:new(
         player.boost_time_cd,
         function()
             player.can_use_boost = true
-            print("Boost cooldown timer finished!")
+            if DEBUG then print("Boost cooldown timer finished") end
         end)
 
     -- Create timer for boost activate
@@ -33,8 +48,8 @@ function Player:new()
         player.boost_time,
         function()
             player.can_use_boost = false
-            player.boost_cd_timer:start()
-            print("Boost cooldown timer started!")
+            player.boost_cd_timer:start() -- After boost is finished immediately start boost cooldown timer
+            if DEBUG then print("Boost cooldown timer started") end
         end
     )
 
@@ -101,6 +116,18 @@ function Player:update(dt)
     -- Update timers
     self.boost_active_timer:update(dt)
     self.boost_cd_timer:update(dt)
+end
+
+function Player:draw()
+    -- Get width and height of image
+    local width = self.img:getWidth()
+    local height = self.img:getHeight()
+
+    -- Draw entity
+    love.graphics.draw(self.img, self.x, self.y, self.angle, self.sx, self.sy, width / 2, height / 2)
+
+    -- Draw collider
+    love.graphics.circle("line", self.body:getX(), self.body:getY(), self.shape:getRadius(), 20)
 end
 
 return Player

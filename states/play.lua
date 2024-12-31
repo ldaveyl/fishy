@@ -3,23 +3,40 @@ local Enemy = require "entities.enemy"
 local EnemySpawner = require "systems.enemy_spawner"
 local Input = require "systems.input"
 local Player = require "entities.player"
+local Physics = require "systems.physics"
 local Utils = require "utils"
 
 local PlayState = {}
 
 function PlayState:new()
+    -- Create physics world
+    local world = love.physics.newWorld(0, 0, true)          -- No gravity, and rigid bodies are allowed to sleep
+    world:setCallbacks(Physics.begin_contact, nil, nil, nil) -- Set the collision callbacks for the world
+
+    -- Initiate play state
     local play_state = {
-        player = Player:new(),
-        cooldown_bar = CooldownBar:new(),
+        world = world,
+        player = Player:new(world),
+        cooldown_bar = CooldownBar:new()
     }
-    local spawn_margin = 0.05 * WH
+
+    -- Create enemy spawner
+    local spawn_margin = 0.05 * WH -- Margin form top and bottom of screen
     play_state.enemy_spawner = EnemySpawner:new(40, spawn_margin, 20, WH - (2 * spawn_margin), 0.5, 3.0, Enemy, 200)
+
     setmetatable(play_state, self)
     self.__index = self
     return play_state
 end
 
+-- function PlayState:init()
+
+-- end
+
 function PlayState:update(dt)
+    -- Update world
+    self.world:update(dt)
+
     -- Update player
     self.player:update(dt)
 
@@ -40,9 +57,7 @@ end
 
 function PlayState:draw()
     -- Draw spawner region
-    if DEBUG then
-        self.enemy_spawner:draw()
-    end
+    if DEBUG then self.enemy_spawner:draw() end
 
     -- Draw UI
     self.cooldown_bar:draw()

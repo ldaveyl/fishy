@@ -1,5 +1,3 @@
-local Input = require "systems.input"
-local Enemy = require "entities.enemy"
 local Game = require "game"
 local PlayState = require "states.play"
 
@@ -15,6 +13,9 @@ function love.load()
     WH = love.graphics.getHeight()
     WW = love.graphics.getWidth()
 
+    -- Set up physics
+    love.physics.setMeter(64) -- 64 px is 1m
+
     -- Create a new game
     GAME = Game:new(PlayState:new())
 end
@@ -27,6 +28,10 @@ end
 function love.draw()
     -- Draw game
     GAME:draw()
+
+    -- Display FPS
+    local fps = love.timer.getFPS()
+    if DEBUG then love.graphics.print(tostring(fps) .. " fps") end
 end
 
 function love.keypressed(key)
