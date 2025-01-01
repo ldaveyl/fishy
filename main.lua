@@ -13,9 +13,6 @@ function love.load()
     WH = love.graphics.getHeight()
     WW = love.graphics.getWidth()
 
-    -- Set up physics
-    love.physics.setMeter(64) -- 64 px is 1m
-
     -- Create a new game
     GAME = Game:new(PlayState:new())
 end
@@ -30,8 +27,10 @@ function love.draw()
     GAME:draw()
 
     -- Display FPS
-    local fps = love.timer.getFPS()
-    if DEBUG then love.graphics.print(tostring(fps) .. " fps") end
+    if DEBUG then
+        local fps = love.timer.getFPS()
+        love.graphics.print(tostring(fps) .. " fps")
+    end
 end
 
 function love.keypressed(key)

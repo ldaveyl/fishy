@@ -1,3 +1,4 @@
+local Collider = require "systems.collider"
 local Entity = require "entities.entity"
 local Input = require "systems.input"
 local Timer = require "systems.timer"
@@ -7,22 +8,18 @@ local Player = {}
 
 setmetatable(Player, { __index = Entity })
 
-function Player:new(world)
+function Player:new()
     -- Define player vars
     local x = WW / 2
     local y = WH / 2
-    local sx = 0.2
-    local sy = 0.2
+    local sx = 1
+    local sy = 1
     local vx = 0
     local vy = 0
     local img = love.graphics.newImage("assets/images/fish2.png")
-    local body = love.physics.newBody(world, x, y, "dynamic")
-    local shape = love.physics.newCircleShape(50)
-    local fixture = love.physics.newFixture(body, shape)
-    fixture:setUserData("Player") -- Set ID of fixture
 
-    -- Creat player
-    local player = Entity:new(x, y, sx, sy, vx, vy, img, world, body, shape, fixture)
+    -- Create player
+    local player = Entity:new(x, y, sx, sy, vx, vy, img)
 
     -- Add additional properties
     player.max_v = 1000         -- Max velocity
@@ -33,7 +30,8 @@ function Player:new(world)
     player.boost_time_cd = 3    -- Boost time cooldown
     player.can_use_boost = true -- Track if boost can be used
 
-    -- Set physics
+    -- Physics collider (would be nice if read from file instead of hardcoded?)
+    player.collider = Collider:new({ 73.2, -43.2, 60.1, -41.2, 46.8, -56.6, 3.8, -36.4, 7.6, -33.2, -20.2, -28.9, -23.8, -31.8, -44.6, -18.4, -43.5, -17.2, -60.7, -8.6, -117.1, -31.9, -105.9, 0.3, -117.1, 32.5, -60.7, 7.5, -40.3, 18.4, -46.3, 25.5, -25.3, 32.2, -20.2, 29.1, 43.1, 34.5, 36.0, 40.3, 45.6, 49.7, 58.1, 35.7, 73.2, 37.0, 101.3, 25.0, 121.2, 5.4, 121.2, 2.6, 121.2, -2.1, 101.3, -17.8 })
 
     -- Create timer for boost cooldown
     player.boost_cd_timer = Timer:new(
@@ -127,7 +125,7 @@ function Player:draw()
     love.graphics.draw(self.img, self.x, self.y, self.angle, self.sx, self.sy, width / 2, height / 2)
 
     -- Draw collider
-    love.graphics.circle("line", self.body:getX(), self.body:getY(), self.shape:getRadius(), 20)
+    self.collider:draw(self.x, self.y, self.sx, self.sy)
 end
 
 return Player

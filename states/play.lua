@@ -3,20 +3,14 @@ local Enemy = require "entities.enemy"
 local EnemySpawner = require "systems.enemy_spawner"
 local Input = require "systems.input"
 local Player = require "entities.player"
-local Physics = require "systems.physics"
 local Utils = require "utils"
 
 local PlayState = {}
 
 function PlayState:new()
-    -- Create physics world
-    local world = love.physics.newWorld(0, 0, true)          -- No gravity, and rigid bodies are allowed to sleep
-    world:setCallbacks(Physics.begin_contact, nil, nil, nil) -- Set the collision callbacks for the world
-
     -- Initiate play state
     local play_state = {
-        world = world,
-        player = Player:new(world),
+        player = Player:new(),
         cooldown_bar = CooldownBar:new()
     }
 
@@ -34,9 +28,6 @@ end
 -- end
 
 function PlayState:update(dt)
-    -- Update world
-    self.world:update(dt)
-
     -- Update player
     self.player:update(dt)
 

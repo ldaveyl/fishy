@@ -1,18 +1,14 @@
 local Entity = {}
 
-function Entity:new(x, y, sx, sy, vx, vy, img, world, body, shape, fixture)
+function Entity:new(x, y, sx, sy, vx, vy, img)
     local entity = {
-        x = x,            -- x spawn coordinate
-        y = y,            -- y spawn coordinate
-        sx = sx,          -- x scale
-        sy = sy,          -- y scale
-        vx = vx,          -- x start velocity
-        vy = vy,          -- y start velocity
-        img = img,        -- image
-        world = world,    -- physics world
-        body = body,      -- Collider body
-        shape = shape,    -- Collider shape
-        fixture = fixture -- Attach shape to body
+        x = x,     -- x spawn coordinate
+        y = y,     -- y spawn coordinate
+        sx = sx,   -- x scale
+        sy = sy,   -- y scale
+        vx = vx,   -- x start velocity
+        vy = vy,   -- y start velocity
+        img = img, -- image
     }
     setmetatable(entity, self)
     self.__index = self
