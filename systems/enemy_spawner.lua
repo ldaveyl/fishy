@@ -1,9 +1,10 @@
 local Enemy = require "entities.enemy"
 local RandomTimer = require "systems.random_timer"
+local CollisionShape = require "assets.collision_shape"
 
 local EnemySpawner = {}
 
-function EnemySpawner:new(x, y, width, height, min_spawn_rate, max_spawn_rate, enemy_types, max_v, display)
+function EnemySpawner:new(x, y, width, height, min_spawn_rate, max_spawn_rate, enemy_types, max_v)
     local enemy_spawner = {
         x = x,
         y = y,
@@ -52,8 +53,7 @@ function EnemySpawner:spawn()
     local v_random = math.random(100, self.max_v)
 
     -- Spawn enemy at coordinates
-    local enemy = Enemy:new(x_random, y_random, scale_random, scale_random, v_random, 0,
-        love.graphics.newImage("assets/images/fish2.png"))
+    local enemy = Enemy:new(x_random, y_random, scale_random, scale_random, v_random, 0, CollisionShape["Enemy"]["idle"])
     table.insert(self.enemies, enemy)
 end
 

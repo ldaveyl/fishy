@@ -3,7 +3,7 @@ local PlayState = require "states.play"
 
 function love.load()
     -- Set debug mode
-    DEBUG = true
+    DEBUG = false
 
     -- Seed math.random (otherwise random numbers are the same for every game)
     math.randomseed(os.time())
@@ -15,6 +15,7 @@ function love.load()
 
     -- Create a new game
     GAME = Game:new(PlayState:new())
+    -- GAME = Game:new()
 end
 
 function love.update(dt)

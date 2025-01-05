@@ -51,9 +51,11 @@ function MenuState:update(_)
     self.options_button:update(mouse_pressed)
     self.quit_button:update(mouse_pressed)
 
-    -- If play button was pressed, start game
+    -- Button actions
     if self.play_button.pressed then
         GAME:change_state(PlayState:new())
+    elseif self.quit_button.pressed then
+        love.event.quit()
     end
 
     -- Clear mouse pressed

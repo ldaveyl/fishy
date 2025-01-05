@@ -27,6 +27,7 @@ function CooldownBar:draw()
     local current_width = frac * self.width
 
     -- Draw CooldownBar bar
+    -- local canvas = love.graphics.newCanvas(width, height)
     love.graphics.setColor(1, 1, 1) -- Cooldown bar color
     love.graphics.rectangle("fill", self.x, self.y, current_width, self.height)
 end
