@@ -1,9 +1,10 @@
-local Game = require "game"
-local PlayState = require "states.play"
+local Game = require "src.game"
+local PlayState = require "src.states.play"
 
 function love.load()
-    -- Set debug mode
-    DEBUG = false
+    -- Settings
+    DEBUG = true
+    SPAWN_ENEMIES = true
 
     -- Seed math.random (otherwise random numbers are the same for every game)
     math.randomseed(os.time())

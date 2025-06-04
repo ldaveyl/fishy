@@ -1,28 +1,27 @@
-local CollisionShape = require "assets.collision_shape"
-local Entity = require "entities.entity"
+local Entity = require "src.entities.entity"
+local Input = require "src.systems.input"
+local Timer = require "src.systems.timer"
+local Utils = require "src.utils"
 local HC = require "lib.vrld-HC-eb1f285"
-local Input = require "systems.input"
-local Timer = require "systems.timer"
-local Utils = require "utils"
 
 local Player = {}
 
 setmetatable(Player, { __index = Entity })
 
-function Player:new()
-    -- Define player vars
-    local x = WW / 2
-    local y = WH / 2
-    local sx = 1
-    local sy = 1
-    local vx = 0
-    local vy = 0
-    local shapes = CollisionShape["Player"]
-
+function Player:new(x, y, sx, sy, vx, vy, shapes)
     -- Create player
-    local player = Entity:new(x, y, sx, sy, vx, vy, shapes)
-
-    player:create_colliders(shapes)
+    local player = {
+        x = x,
+        y = y,
+        sx = sx,
+        sy = sy,
+        vx = vx,
+        state = "idle",
+        vy = vy,
+        shapes = shapes,
+        orientation = "fwd",
+        collider = HC.circle(x, y, 80)
+    }
 
     -- Add additional properties
     player.max_v = 1000         -- Max velocity
@@ -112,12 +111,20 @@ function Player:update(dt)
     self:update_position(dt)
 
     -- Update collider
-    self:update_collider()
-    self.colliders[self.state][self.orientation]:moveTo(self.x, self.y)
+    self.collider:moveTo(self.x, self.y)
+
+    -- check for collisions
+    for shape, delta in pairs(HC.collisions(self.collider)) do
+        print(shape)
+    end
 
     -- Update timers
     self.boost_active_timer:update(dt)
     self.boost_cd_timer:update(dt)
+end
+
+function Player:draw()
+    self.collider:draw()
 end
 
 return Player

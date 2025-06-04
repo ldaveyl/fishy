@@ -1,4 +1,4 @@
-local Input = require "systems.input"
+local Input = require "src.systems.input"
 
 local Button = {}
 

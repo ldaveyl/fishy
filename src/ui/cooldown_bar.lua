@@ -1,5 +1,5 @@
-local Bar = require "ui.bar"
-local Utils = require "utils"
+local Bar = require "src.ui.bar"
+local Utils = require "src.utils"
 
 local CooldownBar = {}
 

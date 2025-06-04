@@ -1,4 +1,4 @@
-local Timer = require "systems.timer"
+local Timer = require "src.systems.timer"
 
 local RandomTimer = {}
 

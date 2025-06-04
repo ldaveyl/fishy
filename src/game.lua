@@ -1,6 +1,6 @@
-local Input = require "systems.input"
-local MenuState = require "states.menu"
-local PlayState = require "states.play"
+local Input = require "src.systems.input"
+local MenuState = require "src.states.menu"
+local PlayState = require "src.states.play"
 
 local Game = {}
 
@@ -25,7 +25,7 @@ function Game:draw()
 end
 
 function Game:key_pressed(key)
-    -- Quit the game if Escape if pressed regardless of current state
+    -- Quit the game if Escape is pressed regardless of current state
     if key == "escape" then
         love.event.quit()
     end

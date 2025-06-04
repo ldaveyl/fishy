@@ -1,5 +1,5 @@
-local Enemy = require "entities.enemy"
-local RandomTimer = require "systems.random_timer"
+local Enemy = require "src.entities.enemy"
+local RandomTimer = require "src.systems.random_timer"
 local CollisionShape = require "assets.collision_shape"
 
 local EnemySpawner = {}
@@ -18,7 +18,7 @@ function EnemySpawner:new(x, y, width, height, min_spawn_rate, max_spawn_rate, e
     }
 
     -- Create spawn timer
-    enemy_spawner.spawn_timer = RandomTimer:new(0.5, 5, function()
+    enemy_spawner.spawn_timer = RandomTimer:new(0.5, 3, function()
         enemy_spawner:spawn()
         if DEBUG then print("Spawned Enemy!") end
         enemy_spawner.spawn_timer:start()
@@ -34,11 +34,6 @@ end
 function EnemySpawner:update(dt)
     -- Update spawn timer
     self.spawn_timer:update(dt)
-
-    -- Update enemies
-    for _, enemy in ipairs(self.enemies) do
-        enemy:update(dt)
-    end
 end
 
 function EnemySpawner:spawn()
@@ -53,8 +48,8 @@ function EnemySpawner:spawn()
     local v_random = math.random(100, self.max_v)
 
     -- Spawn enemy at coordinates
-    local enemy = Enemy:new(x_random, y_random, scale_random, scale_random, v_random, 0, CollisionShape["Enemy"]["idle"])
-    table.insert(self.enemies, enemy)
+    local enemy = Enemy:new(x_random, y_random, scale_random, scale_random, v_random, 0, CollisionShape["Enemy"])
+    table.insert(self.enemies, 1, enemy)
 end
 
 function EnemySpawner:draw()
@@ -63,17 +58,5 @@ function EnemySpawner:draw()
     love.graphics.rectangle("fill", self.x, self.y, self.width, self.height)
     love.graphics.reset()
 end
-
--- function EnemySpawner:spawn()
-
-
-
-
-
-
-
-
-
--- end
 
 return EnemySpawner

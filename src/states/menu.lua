@@ -1,6 +1,6 @@
-local Button = require "ui.button"
-local Input = require "systems.input"
-local PlayState = require "states.play"
+local Button = require "src.ui.button"
+local Input = require "src.systems.input"
+local PlayState = require "src.states.play"
 
 local MenuState = {}
 
