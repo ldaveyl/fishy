@@ -1,12 +1,9 @@
-local CollisionShape = require "assets.collision_shape"
 local CooldownBar = require "src.ui.cooldown_bar"
 local Enemy = require "src.entities.enemy"
 local EnemySpawner = require "src.systems.enemy_spawner"
 local Input = require "src.systems.input"
 local Player = require "src.entities.player"
 local Utils = require "src.utils"
-
-local HC = require "lib.vrld-HC-eb1f285"
 
 
 local PlayState = {}
@@ -18,12 +15,10 @@ function PlayState:new()
     -- Create player
     local x = WW / 2
     local y = WH / 2
-    local sx = 1
-    local sy = 1
+    local s = 2
     local vx = 0
     local vy = 0
-    local shapes = CollisionShape["Player"]
-    play_state.player = Player:new(x, y, sx, sy, vx, vy, shapes)
+    play_state.player = Player:new(x, y, s, vx, vy)
 
     -- Add cooldown bar ui
     play_state.cooldown_bar = CooldownBar:new()

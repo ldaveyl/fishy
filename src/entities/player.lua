@@ -1,27 +1,27 @@
+local Collider = require "src.systems.collider"
 local Entity = require "src.entities.entity"
+local HC = require "lib.vrld-HC-eb1f285"
 local Input = require "src.systems.input"
 local Timer = require "src.systems.timer"
 local Utils = require "src.utils"
-local HC = require "lib.vrld-HC-eb1f285"
 
 local Player = {}
 
 setmetatable(Player, { __index = Entity })
 
-function Player:new(x, y, sx, sy, vx, vy, shapes)
+function Player:new(x, y, s, vx, vy)
     -- Create player
     local player = {
         x = x,
         y = y,
-        sx = sx,
-        sy = sy,
+        s = s,
         vx = vx,
-        state = "idle",
         vy = vy,
-        shapes = shapes,
-        orientation = "fwd",
-        collider = HC.circle(x, y, 80)
     }
+
+    -- Create collider
+    player.collider = Collider:new("Player")
+    player.collider.hc:scale(s)
 
     -- Add additional properties
     player.max_v = 1000         -- Max velocity
@@ -59,17 +59,18 @@ end
 function Player:update(dt)
     -- Reset acceleration
     local ax, ay = 0, 0
+    local flip = false
 
     -- Update acceleration. Also flip image for left and right movement
     if love.keyboard.isDown("w") then ay = ay - self.acceleration end
     if love.keyboard.isDown("s") then ay = ay + self.acceleration end
     if love.keyboard.isDown("a") then
         ax = ax - self.acceleration
-        if self.sx > 0 then self.sx = -1 * self.sx end
+        if self.s > 0 then flip = true end
     end
     if love.keyboard.isDown("d") then
         ax = ax + self.acceleration
-        if self.sx < 0 then self.sx = -1 * self.sx end
+        if self.s < 0 then flip = true end
     end
 
     -- If no movement is provided, apply friction so the player slows down
@@ -104,17 +105,26 @@ function Player:update(dt)
 
     -- Apply boost (overrides max velocity)
     if self.boost_active_timer.active then
-        self.vx = Utils.sign(self.sx) * self.max_v_boost
+        self.vx = Utils.sign(self.s) * self.max_v_boost
     end
 
     -- Update position
     self:update_position(dt)
 
+    if flip == true then
+        -- Update scale
+        self.s = -1 * self.s
+
+        -- flip collider horizontally
+        self.collider:flip_x()
+        self.collider.hc:scale(math.abs(self.s))
+    end
+
     -- Update collider
-    self.collider:moveTo(self.x, self.y)
+    self.collider.hc:moveTo(self.x, self.y)
 
     -- check for collisions
-    for shape, delta in pairs(HC.collisions(self.collider)) do
+    for shape, _ in pairs(HC.collisions(self.collider.hc)) do
         print(shape)
     end
 
@@ -124,7 +134,8 @@ function Player:update(dt)
 end
 
 function Player:draw()
-    self.collider:draw()
+    love.graphics.setColor(1, 1, 1, 1)
+    self.collider.hc:draw()
 end
 
 return Player

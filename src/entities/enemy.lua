@@ -1,25 +1,26 @@
+local Collider = require "src.systems.collider"
 local Entity = require "src.entities.entity"
-local HC = require "lib.vrld-HC-eb1f285"
 
 local Enemy = {}
 
 setmetatable(Enemy, { __index = Entity })
 
-function Enemy:new(x, y, sx, sy, vx, vy, shapes)
+function Enemy:new(x, y, s, vx, vy)
     local enemy = {
         x = x,
         y = y,
-        sx = sx,
-        sy = sy,
+        s = s,
         vx = vx,
-        vy = vy,
-        state = "idle",
-        shapes = shapes,
-        collider = HC.circle(x, y, 50)
+        vy = vy
     }
+
+    -- Create collider
+    enemy.collider = Collider:new("Enemy")
+    enemy.collider.hc:scale(s)
 
     setmetatable(enemy, self)
     self.__index = self
+
     return enemy
 end
 
@@ -28,13 +29,14 @@ function Enemy:update(dt)
     self:update_position(dt)
 
     -- Update collider
-    self.collider:moveTo(self.x, self.y) -- There's a bug here: enemies are moving on top of each other
+    self.collider.hc:moveTo(self.x, self.y)
 end
 
 function Enemy:draw()
-    -- love.graphics.setColor(1, 0, 0, 0.3)
+    love.graphics.setColor(1, 0, 0, 1)
+    self.collider.hc:draw()
+    -- love.graphics.clear()
     -- love.graphics.circle("line", self.x, self.y, 50)
-    self.collider:draw()
 
     -- self.collider:draw()
     -- love.graphics.reset()
