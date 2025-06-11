@@ -1,38 +1,37 @@
 local CooldownBar = require "src.ui.cooldown_bar"
 local Enemy = require "src.entities.enemy"
 local EnemySpawner = require "src.systems.enemy_spawner"
+local Hearts = require "src.ui.hearts"
 local Input = require "src.systems.input"
 local Player = require "src.entities.player"
 local Utils = require "src.utils"
 
 
-local PlayState = {}
+local Play = {}
 
-function PlayState:new()
+function Play:new()
     -- Inititate play state table
-    local play_state = {}
+    local play = {}
 
     -- Create player
-    local x = WW / 2
-    local y = WH / 2
-    local s = 2
-    local vx = 0
-    local vy = 0
-    play_state.player = Player:new(x, y, s, vx, vy)
+    play.player = Player:new(WW / 2, WH / 2, 2, 0, 0, 3)
 
     -- Add cooldown bar ui
-    play_state.cooldown_bar = CooldownBar:new()
+    play.cooldown_bar = CooldownBar:new()
+
+    -- Add health bar ui
+    play.hearts = Hearts:new()
 
     -- Create enemy spawner
     local spawn_margin = 0.05 * WH -- Margin form top and bottom of screen
-    play_state.enemy_spawner = EnemySpawner:new(40, spawn_margin, 20, WH - (2 * spawn_margin), 0.5, 3.0, Enemy, 200)
+    play.enemy_spawner = EnemySpawner:new(40, spawn_margin, 20, WH - (2 * spawn_margin), 0.5, 3.0, Enemy, 200)
 
-    setmetatable(play_state, self)
+    setmetatable(play, self)
     self.__index = self
-    return play_state
+    return play
 end
 
-function PlayState:update(dt)
+function Play:update(dt)
     -- Update player
     self.player:update(dt)
 
@@ -54,14 +53,23 @@ function PlayState:update(dt)
         frac = 1 - Utils.clamp(self.player.boost_cd_timer.time_left / self.player.boost_cd_timer.duration, 0, 1)
     end
     self.cooldown_bar:update(frac)
+
+    -- Update hearts UI
+    self.hearts.current_value = self.player.hearts
+
+    -- -- If no lives are left, game over
+    -- if self.player.hearts == 0 then
+    --     GAME:
+    -- end
 end
 
-function PlayState:draw()
+function Play:draw()
     -- Draw spawner region
     if DEBUG then self.enemy_spawner:draw() end
 
     -- Draw UI
     self.cooldown_bar:draw()
+    self.hearts:draw()
 
     -- Draw enemies
     if SPAWN_ENEMIES then
@@ -74,8 +82,8 @@ function PlayState:draw()
     self.player:draw()
 end
 
-function PlayState:key_pressed(key)
+function Play:key_pressed(key)
     Input.key_pressed(key)
 end
 
-return PlayState
+return Play

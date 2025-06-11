@@ -5,11 +5,14 @@ local Collider = {}
 
 function Collider:new(name)
     local collider = {
-        collision_polygon = CollisionPolygon[name]
+        collision_polygon = CollisionPolygon[name],
     }
 
     -- Create collider and flip if necessary
     collider.hc = HC.polygon(unpack(collider.collision_polygon))
+
+    -- Add type to the collider
+    collider.hc.type = name
 
     setmetatable(collider, self)
     self.__index = self

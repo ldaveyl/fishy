@@ -1,5 +1,3 @@
-local HC = require "lib.vrld-HC-eb1f285"
-
 local Entity = {}
 
 function Entity:update_position(dt)

@@ -1,5 +1,6 @@
 local Game = require "src.game"
-local PlayState = require "src.states.play"
+local Play = require "src.states.play"
+local GameOver = require "src.states.game_over"
 
 function love.load()
     -- Settings
@@ -15,8 +16,9 @@ function love.load()
     WW = love.graphics.getWidth()
 
     -- Create a new game
-    GAME = Game:new(PlayState:new())
     -- GAME = Game:new()
+    -- GAME = Game:new(Play:new())
+    GAME = Game:new(GameOver:new())
 end
 
 function love.update(dt)

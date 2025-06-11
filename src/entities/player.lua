@@ -9,14 +9,14 @@ local Player = {}
 
 setmetatable(Player, { __index = Entity })
 
-function Player:new(x, y, s, vx, vy)
-    -- Create player
+function Player:new(x, y, s, vx, vy, hearts)
     local player = {
         x = x,
         y = y,
         s = s,
         vx = vx,
         vy = vy,
+        hearts = hearts
     }
 
     -- Create collider
@@ -24,13 +24,15 @@ function Player:new(x, y, s, vx, vy)
     player.collider.hc:scale(s)
 
     -- Add additional properties
-    player.max_v = 1000         -- Max velocity
-    player.max_v_boost = 2000   -- Max velocity during boost
-    player.acceleration = 2000  -- Acceleration
-    player.friction = 2         -- Friction
-    player.boost_time = 0.1     -- Boost time
-    player.boost_time_cd = 3    -- Boost time cooldown
-    player.can_use_boost = true -- Track if boost can be used
+    player.max_v = 1000           -- Max velocity
+    player.max_v_boost = 2000     -- Max velocity during boost
+    player.acceleration = 2000    -- Acceleration
+    player.friction = 2           -- Friction
+    player.boost_time = 0.1       -- Boost time
+    player.boost_time_cd = 3      -- Boost time cooldown
+    player.can_use_boost = true   -- Track if boost can be used
+    player.is_invinsible = false  -- Can player take damage
+    player.invinsibility_time = 2 -- How long is player invibsible after taking damage
 
     -- Create timer for boost cooldown
     player.boost_cd_timer = Timer:new(
@@ -47,6 +49,15 @@ function Player:new(x, y, s, vx, vy)
             player.can_use_boost = false
             player.boost_cd_timer:start() -- After boost is finished immediately start boost cooldown timer
             if DEBUG then print("Boost cooldown timer started") end
+        end
+    )
+
+    -- Create timer for invisibility
+    player.invinsibility_timer = Timer:new(
+        player.invinsibility_time,
+        function()
+            if DEBUG then print("Invinsibility timer ended") end
+            player.is_invinsible = false
         end
     )
 
@@ -93,7 +104,7 @@ function Player:update(dt)
     -- Trigger boost
     if Input.key_was_pressed("lshift") and self.can_use_boost then
         self.boost_active_timer:start()
-        print("Boost activate timer started!")
+        if DEBUG then print("Boost activate timer started!") end
     end
 
     -- Clamp velocity to maximum velocity
@@ -123,14 +134,21 @@ function Player:update(dt)
     -- Update collider
     self.collider.hc:moveTo(self.x, self.y)
 
-    -- check for collisions
-    for shape, _ in pairs(HC.collisions(self.collider.hc)) do
-        print(shape)
+    -- Check for collisions
+    for collider, _ in pairs(HC.collisions(self.collider.hc)) do
+        if collider.type == "Enemy" and self.is_invinsible == false then
+            if DEBUG then print("1 heart taken!") end
+            self.hearts = self.hearts - 1
+            self.invinsibility_timer:start()
+            self.is_invinsible = true
+            if DEBUG then print("Invinsibility timer started!") end
+        end
     end
 
     -- Update timers
     self.boost_active_timer:update(dt)
     self.boost_cd_timer:update(dt)
+    self.invinsibility_timer:update(dt)
 end
 
 function Player:draw()

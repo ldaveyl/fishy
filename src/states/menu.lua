@@ -1,11 +1,11 @@
 local Button = require "src.ui.button"
 local Input = require "src.systems.input"
-local PlayState = require "src.states.play"
+local Play = require "src.states.play"
 
-local MenuState = {}
+local Menu = {}
 
-function MenuState:new()
-    local menu_state = {
+function Menu:new()
+    local menu = {
         title = "Main Menu",
     }
 
@@ -15,21 +15,21 @@ function MenuState:new()
     local button_x = (WW * 0.5) - (button_width * 0.5)
     local button_y = (WH * 0.5) - (button_height * 0.5)
 
-    menu_state.play_button = Button:new(
+    menu.play_button = Button:new(
         button_x,
         button_y - button_height - button_margin,
         button_width,
         button_height,
         "Play"
     )
-    menu_state.options_button = Button:new(
+    menu.options_button = Button:new(
         button_x,
         button_y,
         button_width,
         button_height,
         "Options"
     )
-    menu_state.quit_button = Button:new(
+    menu.quit_button = Button:new(
         button_x,
         button_y + button_height + button_margin,
         button_width,
@@ -37,12 +37,12 @@ function MenuState:new()
         "Quit"
     )
 
-    setmetatable(menu_state, self)
+    setmetatable(menu, self)
     self.__index = self
-    return menu_state
+    return menu
 end
 
-function MenuState:update(_)
+function Menu:update(_)
     -- Detect if the left mouse button was pressed
     local mouse_pressed = Input.mouse_was_pressed(1)
 
@@ -53,7 +53,7 @@ function MenuState:update(_)
 
     -- Button actions
     if self.play_button.pressed then
-        GAME:change_state(PlayState:new())
+        GAME:change_state(Play:new())
     elseif self.quit_button.pressed then
         love.event.quit()
     end
@@ -62,16 +62,16 @@ function MenuState:update(_)
     Input.clear_mouse_pressed(1)
 end
 
-function MenuState:key_pressed(key)
+function Menu:key_pressed(key)
     -- Send key presses to input
     Input.key_pressed(key)
 end
 
-function MenuState:draw()
+function Menu:draw()
     -- Draw buttons
     self.play_button:draw()
     self.options_button:draw()
     self.quit_button:draw()
 end
 
-return MenuState
+return Menu

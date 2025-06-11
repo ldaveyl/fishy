@@ -1,13 +1,13 @@
 local Input = require "src.systems.input"
-local MenuState = require "src.states.menu"
-local PlayState = require "src.states.play"
+local Menu = require "src.states.menu"
+local Play = require "src.states.play"
 
 local Game = {}
 
 function Game:new(state)
     local game = {
         -- Default state is the menu
-        state = state or MenuState:new()
+        state = state or Menu:new()
     }
     setmetatable(game, self)
     self.__index = self

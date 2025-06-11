@@ -1,5 +1,3 @@
-local Input = require "src.systems.input"
-
 local Button = {}
 
 local button_bg_color_normal = { 0.13, 0.24, 0.46, 1.0 }
