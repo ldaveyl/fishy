@@ -1,6 +1,5 @@
 local Button = require "src.ui.button"
 local Input = require "src.systems.input"
-local Play = require "src.states.play"
 
 local Menu = {}
 
@@ -9,11 +8,11 @@ function Menu:new()
         title = "Main Menu",
     }
 
-    local button_width = WW * 0.5
-    local button_height = WH * 0.2
-    local button_margin = 0.03 * WH
-    local button_x = (WW * 0.5) - (button_width * 0.5)
-    local button_y = (WH * 0.5) - (button_height * 0.5)
+    local button_width = GAME_WIDTH * 0.5
+    local button_height = GAME_HEIGHT * 0.2
+    local button_margin = 0.03 * GAME_HEIGHT
+    local button_x = (GAME_WIDTH * 0.5) - (button_width * 0.5)
+    local button_y = (GAME_HEIGHT * 0.5) - (button_height * 0.5)
 
     menu.play_button = Button:new(
         button_x,
@@ -53,6 +52,7 @@ function Menu:update(_)
 
     -- Button actions
     if self.play_button.pressed then
+        local Play = require "src.states.play"
         GAME:change_state(Play:new())
     elseif self.quit_button.pressed then
         love.event.quit()

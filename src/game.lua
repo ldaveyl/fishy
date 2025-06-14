@@ -1,6 +1,5 @@
 local Input = require "src.systems.input"
 local Menu = require "src.states.menu"
-local Play = require "src.states.play"
 
 local Game = {}
 
@@ -34,7 +33,7 @@ function Game:key_pressed(key)
     self.state:key_pressed(key)
 end
 
-function Game:mouse_pressed(button)
+function Game:mouse_pressed(button, x, y)
     Input.mouse_pressed(button)
 end
 

@@ -1,6 +1,6 @@
 local Collider = require "src.systems.collider"
 local Entity = require "src.entities.entity"
-local HC = require "lib.vrld-HC-eb1f285"
+local HC = require "lib.HC"
 local Input = require "src.systems.input"
 local Timer = require "src.systems.timer"
 local Utils = require "src.utils"
@@ -9,11 +9,14 @@ local Player = {}
 
 setmetatable(Player, { __index = Entity })
 
-function Player:new(x, y, s, vx, vy, hearts)
+Player.img = love.graphics.newImage("assets/images/fish2.png")
+
+function Player:new(x, y, sx, sy, vx, vy, hearts)
     local player = {
         x = x,
         y = y,
-        s = s,
+        sx = sx,
+        sy = sy,
         vx = vx,
         vy = vy,
         hearts = hearts
@@ -21,7 +24,7 @@ function Player:new(x, y, s, vx, vy, hearts)
 
     -- Create collider
     player.collider = Collider:new("Player")
-    player.collider.hc:scale(s)
+    player.collider.hc:scale(sx)
 
     -- Add additional properties
     player.max_v = 1000           -- Max velocity
@@ -77,11 +80,11 @@ function Player:update(dt)
     if love.keyboard.isDown("s") then ay = ay + self.acceleration end
     if love.keyboard.isDown("a") then
         ax = ax - self.acceleration
-        if self.s > 0 then flip = true end
+        if self.sx > 0 then flip = true end
     end
     if love.keyboard.isDown("d") then
         ax = ax + self.acceleration
-        if self.s < 0 then flip = true end
+        if self.sx < 0 then flip = true end
     end
 
     -- If no movement is provided, apply friction so the player slows down
@@ -116,7 +119,7 @@ function Player:update(dt)
 
     -- Apply boost (overrides max velocity)
     if self.boost_active_timer.active then
-        self.vx = Utils.sign(self.s) * self.max_v_boost
+        self.vx = Utils.sign(self.sx) * self.max_v_boost
     end
 
     -- Update position
@@ -124,11 +127,11 @@ function Player:update(dt)
 
     if flip == true then
         -- Update scale
-        self.s = -1 * self.s
+        self.sx = -1 * self.sx
 
         -- flip collider horizontally
         self.collider:flip_x()
-        self.collider.hc:scale(math.abs(self.s))
+        self.collider.hc:scale(math.abs(self.sx))
     end
 
     -- Update collider
@@ -154,6 +157,16 @@ end
 function Player:draw()
     love.graphics.setColor(1, 1, 1, 1)
     self.collider.hc:draw()
+    love.graphics.draw(
+        Player.img,
+        self.x,
+        self.y,
+        0,
+        self.sx,
+        self.sy,
+        self.img:getWidth() / 2,
+        self.img:getHeight() / 2
+    )
 end
 
 return Player

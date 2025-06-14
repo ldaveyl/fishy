@@ -1,6 +1,7 @@
 local CooldownBar = require "src.ui.cooldown_bar"
 local Enemy = require "src.entities.enemy"
 local EnemySpawner = require "src.systems.enemy_spawner"
+local HC = require "lib.HC"
 local Hearts = require "src.ui.hearts"
 local Input = require "src.systems.input"
 local Player = require "src.entities.player"
@@ -14,7 +15,7 @@ function Play:new()
     local play = {}
 
     -- Create player
-    play.player = Player:new(WW / 2, WH / 2, 2, 0, 0, 3)
+    play.player = Player:new(GAME_WIDTH / 2, GAME_HEIGHT / 2, 2, 2, 0, 0, 1)
 
     -- Add cooldown bar ui
     play.cooldown_bar = CooldownBar:new()
@@ -23,8 +24,8 @@ function Play:new()
     play.hearts = Hearts:new()
 
     -- Create enemy spawner
-    local spawn_margin = 0.05 * WH -- Margin form top and bottom of screen
-    play.enemy_spawner = EnemySpawner:new(40, spawn_margin, 20, WH - (2 * spawn_margin), 0.5, 3.0, Enemy, 200)
+    local spawn_margin = 0.05 * GAME_HEIGHT -- Margin from top and bottom of screen
+    play.enemy_spawner = EnemySpawner:new(40, spawn_margin, 20, GAME_HEIGHT - (2 * spawn_margin), 0.5, 3.0, Enemy, 200)
 
     setmetatable(play, self)
     self.__index = self
@@ -57,10 +58,15 @@ function Play:update(dt)
     -- Update hearts UI
     self.hearts.current_value = self.player.hearts
 
-    -- -- If no lives are left, game over
-    -- if self.player.hearts == 0 then
-    --     GAME:
-    -- end
+    -- If no lives are left, game over
+    if self.player.hearts == 0 then
+        -- Clean player environment
+        self:clean()
+
+        -- Switch to game over state
+        local GameOver = require "src.states.game_over"
+        GAME:change_state(GameOver:new())
+    end
 end
 
 function Play:draw()
@@ -80,6 +86,16 @@ function Play:draw()
 
     -- Draw player
     self.player:draw()
+end
+
+function Play:clean()
+    -- Remove all enemy colliders
+    for i = #self.enemy_spawner.enemies, 1, -1 do
+        HC.remove(self.enemy_spawner.enemies[i].collider.hc)
+    end
+
+    -- Remove player collider
+    HC.remove(self.player.collider.hc)
 end
 
 function Play:key_pressed(key)

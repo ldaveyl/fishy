@@ -1,13 +1,14 @@
 local Hearts = {}
 
 function Hearts:new()
+    -- x and y are of right-most heart
     local hearts = {
-        x = 0.95 * WW, -- x and y of right-most heart
-        y = 0.05 * WH,
+        x = 0.95 * GAME_WIDTH,
+        y = 0.05 * GAME_HEIGHT,
         s = 0.5,
         current_value = 3,
         max_value = 3,
-        padding = 150,
+        padding = 50,
         img = love.graphics.newImage("assets/images/fish2.png")
     }
     setmetatable(hearts, self)

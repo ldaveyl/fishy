@@ -1,11 +1,20 @@
-local HC = require "lib.vrld-HC-eb1f285"
+---@diagnostic disable: deprecated
+local HC = require "lib.HC"
 local CollisionPolygon = require "assets.collision_polygon"
 
 local Collider = {}
 
+local function deep_copy_collision_polygon(polygon)
+    local copy = {}
+    for i = 1, #polygon do
+        copy[i] = polygon[i]
+    end
+    return copy
+end
+
 function Collider:new(name)
     local collider = {
-        collision_polygon = CollisionPolygon[name],
+        collision_polygon = deep_copy_collision_polygon(CollisionPolygon[name]),
     }
 
     -- Create collider and flip if necessary
@@ -33,33 +42,5 @@ function Collider:flip_x()
     HC.remove(self.hc)
     self.hc = HC.polygon(unpack(self.collision_polygon))
 end
-
--- function Collider:new(verts)
---     local collider =
---         -- Vertices of collider compared to origin.
---         -- These are alternating x and y coords
---         verts = verts
---     }
---     setmetatable(collider, self)
---     self.__index = self
---     return collider
--- end
-
--- function Collider:get_shape(x, y, sx, sy)
---     local shape = {}
---     for i, v in ipairs(self.verts) do
---         if i % 2 == 0 then -- 1-based indexing so x is at position 1 and y at position 2
---             table.insert(shape, y + v * sy)
---         else
---             table.insert(shape, x + v * sx)
---         end
---     end
---     return shape
--- end
-
--- function Collider:draw(x, y, sx, sy)
---     local shape = self:get_shape(x, y, sx, sy)
---     love.graphics.polygon("line", shape)
--- end
 
 return Collider

@@ -1,7 +1,6 @@
 local Button = require "src.ui.button"
+local Game = require "src.game"
 local Input = require "src.systems.input"
-local Menu = require "src.states.menu"
-local Play = require "src.states.play"
 
 local GameOver = {}
 
@@ -10,11 +9,11 @@ function GameOver:new()
         title = "Game Over"
     }
 
-    local button_width = WW * 0.5
-    local button_height = WH * 0.2
-    local button_margin = 0.03 * WH
-    local button_x = (WW * 0.5) - (button_width * 0.5)
-    local button_y = (WH * 0.5) - (button_height * 0.5)
+    local button_width = GAME_WIDTH * 0.5
+    local button_height = GAME_HEIGHT * 0.2
+    local button_margin = 0.03 * GAME_HEIGHT
+    local button_x = (GAME_WIDTH * 0.5) - (button_width * 0.5)
+    local button_y = (GAME_HEIGHT * 0.5) - (button_height * 0.5)
 
     game_over.restart_button = Button:new(
         button_x,
@@ -46,9 +45,11 @@ function GameOver:update(_)
 
     -- Button actions
     if self.restart_button.pressed then
-        GAME:change_state(Play:new())
+        local Play = require "src.states.play"
+        GAME = Game:new(Play:new())
     elseif self.main_menu_button.pressed then
-        GAME:change_state(Menu:new())
+        local Menu = require "src.states.menu"
+        GAME = Game:new(Menu:new())
     end
 
     -- Clear mouse pressed

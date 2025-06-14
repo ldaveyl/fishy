@@ -1,5 +1,6 @@
 local Enemy = require "src.entities.enemy"
 local RandomTimer = require "src.systems.random_timer"
+local Push = require "lib.push"
 
 local EnemySpawner = {}
 
@@ -47,15 +48,17 @@ function EnemySpawner:spawn()
     local v_random = math.random(100, self.max_v)
 
     -- Spawn enemy at coordinates
-    local enemy = Enemy:new(x_random, y_random, scale_random, v_random, 0)
+    local enemy = Enemy:new(x_random, y_random, scale_random, scale_random, v_random, 0)
     table.insert(self.enemies, 1, enemy)
 end
 
 function EnemySpawner:draw()
+    Push:start()
     -- Show spawn region
     love.graphics.setColor(1, 0, 0, 0.3)
     love.graphics.rectangle("fill", self.x, self.y, self.width, self.height)
     love.graphics.reset()
+    Push:finish()
 end
 
 return EnemySpawner
