@@ -3,8 +3,8 @@ local Hearts = {}
 function Hearts:new()
     -- x and y are of right-most heart
     local hearts = {
-        x = 0.95 * GAME_WIDTH,
-        y = 0.05 * GAME_HEIGHT,
+        x = 0.95 * WINDOW_WIDTH,
+        y = 0.05 * WINDOW_HEIGHT,
         s = 0.5,
         current_value = 3,
         max_value = 3,

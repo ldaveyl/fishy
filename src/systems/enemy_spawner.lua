@@ -1,6 +1,5 @@
 local Enemy = require "src.entities.enemy"
 local RandomTimer = require "src.systems.random_timer"
-local Push = require "lib.push"
 
 local EnemySpawner = {}
 
@@ -53,12 +52,9 @@ function EnemySpawner:spawn()
 end
 
 function EnemySpawner:draw()
-    Push:start()
     -- Show spawn region
-    love.graphics.setColor(1, 0, 0, 0.3)
     love.graphics.rectangle("fill", self.x, self.y, self.width, self.height)
     love.graphics.reset()
-    Push:finish()
 end
 
 return EnemySpawner

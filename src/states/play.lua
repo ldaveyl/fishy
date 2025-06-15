@@ -3,10 +3,8 @@ local Enemy = require "src.entities.enemy"
 local EnemySpawner = require "src.systems.enemy_spawner"
 local HC = require "lib.HC"
 local Hearts = require "src.ui.hearts"
-local Input = require "src.systems.input"
 local Player = require "src.entities.player"
 local Utils = require "src.utils"
-
 
 local Play = {}
 
@@ -15,7 +13,7 @@ function Play:new()
     local play = {}
 
     -- Create player
-    play.player = Player:new(GAME_WIDTH / 2, GAME_HEIGHT / 2, 2, 2, 0, 0, 1)
+    play.player = Player:new(WINDOW_WIDTH / 2, WINDOW_HEIGHT / 2, 2, 2, 0, 0, 1)
 
     -- Add cooldown bar ui
     play.cooldown_bar = CooldownBar:new()
@@ -24,8 +22,10 @@ function Play:new()
     play.hearts = Hearts:new()
 
     -- Create enemy spawner
-    local spawn_margin = 0.05 * GAME_HEIGHT -- Margin from top and bottom of screen
-    play.enemy_spawner = EnemySpawner:new(40, spawn_margin, 20, GAME_HEIGHT - (2 * spawn_margin), 0.5, 3.0, Enemy, 200)
+    local spawn_margin = 0.05 * WINDOW_HEIGHT -- Margin from top and bottom of screen
+    play.enemy_spawner = EnemySpawner:new(40, spawn_margin, 20,
+        WINDOW_HEIGHT - (2 * spawn_margin), 0.5, 3.0,
+        Enemy, 200)
 
     setmetatable(play, self)
     self.__index = self
@@ -96,10 +96,6 @@ function Play:clean()
 
     -- Remove player collider
     HC.remove(self.player.collider.hc)
-end
-
-function Play:key_pressed(key)
-    Input.key_pressed(key)
 end
 
 return Play

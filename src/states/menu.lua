@@ -8,11 +8,11 @@ function Menu:new()
         title = "Main Menu",
     }
 
-    local button_width = GAME_WIDTH * 0.5
-    local button_height = GAME_HEIGHT * 0.2
-    local button_margin = 0.03 * GAME_HEIGHT
-    local button_x = (GAME_WIDTH * 0.5) - (button_width * 0.5)
-    local button_y = (GAME_HEIGHT * 0.5) - (button_height * 0.5)
+    local button_width = WINDOW_WIDTH * 0.5
+    local button_height = WINDOW_HEIGHT * 0.2
+    local button_margin = 0.03 * WINDOW_HEIGHT
+    local button_x = (WINDOW_WIDTH * 0.5) - (button_width * 0.5)
+    local button_y = (WINDOW_HEIGHT * 0.5) - (button_height * 0.5)
 
     menu.play_button = Button:new(
         button_x,
@@ -60,11 +60,6 @@ function Menu:update(_)
 
     -- Clear mouse pressed
     Input.clear_mouse_pressed(1)
-end
-
-function Menu:key_pressed(key)
-    -- Send key presses to input
-    Input.key_pressed(key)
 end
 
 function Menu:draw()

@@ -1,14 +1,16 @@
-local Button = {}
-
 local button_bg_color_normal = { 0.13, 0.24, 0.46, 1.0 }
 local button_bg_color_hover = { 0.26, 0.48, 0.92, 1.0 }
 local button_text_color = { 1, 1, 1, 1 }
 
+local Button = {}
+
 function Button:is_mouse_hover()
     local mouse_x, mouse_y = love.mouse.getPosition()
-    local hover = mouse_x >= self.x and mouse_x <= self.x + self.width and mouse_y >= self.y and
-        mouse_y <= self.y + self.height
-    return hover
+    if (mouse_x and mouse_y) then
+        local hover = mouse_x >= self.x and mouse_x <= self.x + self.width and mouse_y >= self.y and
+            mouse_y <= self.y + self.height
+        return hover
+    end
 end
 
 function Button:new(x, y, width, height, text)

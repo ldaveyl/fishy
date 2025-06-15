@@ -27,7 +27,7 @@ function Player:new(x, y, sx, sy, vx, vy, hearts)
     player.collider.hc:scale(sx)
 
     -- Add additional properties
-    player.max_v = 1000           -- Max velocity
+    player.max_v = 5000           -- Max velocity
     player.max_v_boost = 2000     -- Max velocity during boost
     player.acceleration = 2000    -- Acceleration
     player.friction = 2           -- Friction
@@ -124,6 +124,8 @@ function Player:update(dt)
 
     -- Update position
     self:update_position(dt)
+    -- Update collider
+    self.collider.hc:moveTo(self.x, self.y)
 
     if flip == true then
         -- Update scale
@@ -134,8 +136,6 @@ function Player:update(dt)
         self.collider.hc:scale(math.abs(self.sx))
     end
 
-    -- Update collider
-    self.collider.hc:moveTo(self.x, self.y)
 
     -- Check for collisions
     for collider, _ in pairs(HC.collisions(self.collider.hc)) do
@@ -146,6 +146,32 @@ function Player:update(dt)
             self.is_invinsible = true
             if DEBUG then print("Invinsibility timer started!") end
         end
+    end
+
+    -- Clamp player to screen bounds and reset velocity
+    local half_player_width = math.abs(self.sx) * Player.img:getWidth() / 2
+    local half_player_height = math.abs(self.sy) * Player.img:getHeight() / 2
+
+    -- Left border
+    if self.x < half_player_width then
+        self.x = half_player_width
+        if self.vx < 0 then self.vx = 0 end
+
+        -- Right border
+    elseif self.x > WINDOW_WIDTH - half_player_width then
+        self.x = WINDOW_WIDTH - half_player_width
+        if self.vx > 0 then self.vx = 0 end
+    end
+
+    -- Upper border
+    if self.y < half_player_height then
+        self.y = half_player_height
+        if self.vy < 0 then self.vy = 0 end
+
+        -- Lower border
+    elseif self.y > WINDOW_HEIGHT - half_player_height then
+        self.y = WINDOW_HEIGHT - half_player_height
+        if self.vy > 0 then self.vy = 0 end
     end
 
     -- Update timers
