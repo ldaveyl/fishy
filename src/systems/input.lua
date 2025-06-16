@@ -1,5 +1,10 @@
 local Input = {}
 
+Input.left_key = "a"
+Input.right_key = "d"
+Input.up_key = "w"
+Input.down_key = "s"
+
 local keys_pressed = {}
 local mouse_buttons_pressed = {}
 

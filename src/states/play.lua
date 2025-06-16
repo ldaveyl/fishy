@@ -13,7 +13,7 @@ function Play:new()
     local play = {}
 
     -- Create player
-    play.player = Player:new(WINDOW_WIDTH / 2, WINDOW_HEIGHT / 2, 2, 2, 0, 0, 1)
+    play.player = Player:new(WINDOW_WIDTH / 2, WINDOW_HEIGHT / 2, 1, 1, 0, 0, 1)
 
     -- Add cooldown bar ui
     play.cooldown_bar = CooldownBar:new()
@@ -73,10 +73,6 @@ function Play:draw()
     -- Draw spawner region
     if DEBUG then self.enemy_spawner:draw() end
 
-    -- Draw UI
-    self.cooldown_bar:draw()
-    self.hearts:draw()
-
     -- Draw enemies
     if SPAWN_ENEMIES then
         for _, enemy in ipairs(self.enemy_spawner.enemies) do
@@ -86,6 +82,10 @@ function Play:draw()
 
     -- Draw player
     self.player:draw()
+
+    -- Draw UI
+    self.cooldown_bar:draw()
+    self.hearts:draw()
 end
 
 function Play:clean()

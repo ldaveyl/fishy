@@ -5,6 +5,7 @@ function love.load()
     -- Settings
     DEBUG = true
     SPAWN_ENEMIES = false
+    MOVE_THROUGH_BORDERS = true
 
     -- Seed math.random (otherwise random numbers are the same for every game)
     math.randomseed(os.time())
@@ -13,7 +14,7 @@ function love.load()
     FONT = love.graphics.newFont("assets/fonts/ARIALBD.TTF", 64, "none", 2)
 
     -- Graphics parameters
-    WINDOW_WIDTH, WINDOW_HEIGHT = love.window.getDesktopDimensions()
+    WINDOW_WIDTH, WINDOW_HEIGHT = 1920, 1080
 
     -- Create a new game
     local Play = require "src.states.play"
@@ -25,9 +26,6 @@ function love.update(dt)
     -- Update game
     GAME:update(dt)
 end
-
--- function love.resize(window_width, window_height)
--- end
 
 function love.draw()
     -- Draw game

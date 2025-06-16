@@ -75,23 +75,26 @@ function Player:update(dt)
     local ax, ay = 0, 0
     local flip = false
 
+    -- Define movement
+    local moving_left = love.keyboard.isDown(Input.left_key)
+    local moving_right = love.keyboard.isDown(Input.right_key)
+    local moving_up = love.keyboard.isDown(Input.up_key)
+    local moving_down = love.keyboard.isDown(Input.down_key)
+
     -- Update acceleration. Also flip image for left and right movement
-    if love.keyboard.isDown("w") then ay = ay - self.acceleration end
-    if love.keyboard.isDown("s") then ay = ay + self.acceleration end
-    if love.keyboard.isDown("a") then
-        ax = ax - self.acceleration
+    if moving_up then ay = -self.acceleration end
+    if moving_down then ay = self.acceleration end
+    if moving_left and not moving_right then
+        ax = -self.acceleration
         if self.sx > 0 then flip = true end
     end
-    if love.keyboard.isDown("d") then
-        ax = ax + self.acceleration
+    if moving_right and not moving_left then
+        ax = self.acceleration
         if self.sx < 0 then flip = true end
     end
 
     -- If no movement is provided, apply friction so the player slows down
-    if not (love.keyboard.isDown("w") or
-            love.keyboard.isDown("s") or
-            love.keyboard.isDown("a") or
-            love.keyboard.isDown("d")) then
+    if not (moving_up or moving_down or moving_left or moving_right) then
         local friction_factor = 1 - math.min(self.friction * dt, 1)
         self.vx = self.vx * friction_factor
         self.vy = self.vy * friction_factor
@@ -152,26 +155,31 @@ function Player:update(dt)
     local half_player_width = math.abs(self.sx) * Player.img:getWidth() / 2
     local half_player_height = math.abs(self.sy) * Player.img:getHeight() / 2
 
-    -- Left border
-    if self.x < half_player_width then
-        self.x = half_player_width
-        if self.vx < 0 then self.vx = 0 end
-
-        -- Right border
-    elseif self.x > WINDOW_WIDTH - half_player_width then
-        self.x = WINDOW_WIDTH - half_player_width
-        if self.vx > 0 then self.vx = 0 end
+    -- Left and right borders
+    -- Player teleports to other side if specified
+    if not MOVE_THROUGH_BORDERS then
+        if self.x < half_player_width then
+            self.x = half_player_width
+            self.vx = 0
+        elseif self.x > WINDOW_WIDTH - half_player_width then
+            self.x = WINDOW_WIDTH - half_player_width
+            self.vx = 0
+        end
+    else
+        if self.x < 0 then
+            self.x = WINDOW_WIDTH
+        elseif self.x > WINDOW_WIDTH then
+            self.x = 0
+        end
     end
 
-    -- Upper border
+    -- Upper and lower borders
     if self.y < half_player_height then
         self.y = half_player_height
-        if self.vy < 0 then self.vy = 0 end
-
-        -- Lower border
+        self.vy = 0
     elseif self.y > WINDOW_HEIGHT - half_player_height then
         self.y = WINDOW_HEIGHT - half_player_height
-        if self.vy > 0 then self.vy = 0 end
+        self.vy = 0
     end
 
     -- Update timers
