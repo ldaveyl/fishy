@@ -10,21 +10,26 @@ local Player = {}
 setmetatable(Player, { __index = Entity })
 
 Player.img = love.graphics.newImage("assets/images/fish2.png")
+Player.size_gain_multiplier = 0.1
+Player.score_gain_multiplier = 100
 
-function Player:new(x, y, sx, sy, vx, vy, hearts)
+function Player:new(x, y, size, vx, vy, hearts)
     local player = {
         x = x,
         y = y,
-        sx = sx,
-        sy = sy,
+        size = size,
         vx = vx,
         vy = vy,
-        hearts = hearts
+        hearts = hearts,
     }
+
+    -- Scale is size
+    player.sx = size
+    player.sy = size
 
     -- Create collider
     player.collider = Collider:new("Player")
-    player.collider.hc:scale(sx)
+    player.collider.hc:scale(player.sx)
 
     -- Add additional properties
     player.max_v = 5000           -- Max velocity
@@ -36,6 +41,7 @@ function Player:new(x, y, sx, sy, vx, vy, hearts)
     player.can_use_boost = true   -- Track if boost can be used
     player.is_invinsible = false  -- Can player take damage
     player.invinsibility_time = 2 -- How long is player invibsible after taking damage
+    player.score = 0              -- Score for highscores
 
     -- Create timer for boost cooldown
     player.boost_cd_timer = Timer:new(
@@ -127,6 +133,7 @@ function Player:update(dt)
 
     -- Update position
     self:update_position(dt)
+
     -- Update collider
     self.collider.hc:moveTo(self.x, self.y)
 
@@ -139,15 +146,34 @@ function Player:update(dt)
         self.collider.hc:scale(math.abs(self.sx))
     end
 
-
     -- Check for collisions
     for collider, _ in pairs(HC.collisions(self.collider.hc)) do
-        if collider.type == "Enemy" and self.is_invinsible == false then
-            if DEBUG then print("1 heart taken!") end
-            self.hearts = self.hearts - 1
-            self.invinsibility_timer:start()
-            self.is_invinsible = true
-            if DEBUG then print("Invinsibility timer started!") end
+        if collider.type == "Enemy" and not self.is_invinsible then
+            print("enemy size: " .. collider.owner.size)
+            if self.size >= collider.owner.size then
+                -- Mark enemy for removal
+                table.insert(self.owner.enemies_to_remove, collider.owner)
+
+                -- Update size and collider
+                local gain = collider.owner.size * Player.size_gain_multiplier
+                local original_size = self.size
+                self.size = self.size + gain
+                self.collider.hc:scale((original_size + gain) / original_size)
+
+                -- Update scale
+                self.sx = self.size * Utils.sign(self.sx)
+                self.sy = self.size * Utils.sign(self.sy)
+
+                -- Update score
+                local score_increase = collider.owner.size * Player.score_gain_multiplier
+                self.owner.score:increase_score(score_increase)
+            else
+                self.hearts = self.hearts - 1
+                if DEBUG then print("1 heart taken! " .. self.hearts .. " hearts left.") end
+                self.invinsibility_timer:start()
+                self.is_invinsible = true
+                if DEBUG then print("Invinsibility timer started!") end
+            end
         end
     end
 

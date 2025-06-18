@@ -7,19 +7,26 @@ setmetatable(Enemy, { __index = Entity })
 
 Enemy.img = love.graphics.newImage("assets/images/fish2.png")
 
-function Enemy:new(x, y, sx, sy, vx, vy)
+function Enemy:new(x, y, size, vx, vy, hearts)
     local enemy = {
         x = x,
         y = y,
-        sx = sx,
-        sy = sy,
+        size = size,
         vx = vx,
         vy = vy,
+        hearts = hearts
     }
+
+    -- Scale is size
+    enemy.sx = size
+    enemy.sy = size
 
     -- Create collider
     enemy.collider = Collider:new("Enemy")
-    enemy.collider.hc:scale(sx)
+    enemy.collider.hc:scale(enemy.sx)
+
+    -- Add backreference to enemy
+    enemy.collider.hc.owner = enemy
 
     setmetatable(enemy, self)
     self.__index = self

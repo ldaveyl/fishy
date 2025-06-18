@@ -13,7 +13,7 @@ function EnemySpawner:new(x, y, width, height, min_spawn_rate, max_spawn_rate, e
         max_spawn_rate = max_spawn_rate,
         enemy_types = enemy_types,
         max_v = max_v,
-        enemies = {}
+        enemies = {},
     }
 
     -- Create spawn timer
@@ -40,14 +40,13 @@ function EnemySpawner:spawn()
     local x_random = math.random(self.x, self.x + self.width)
     local y_random = math.random(self.y, self.y + self.height)
 
-    -- Get random scale
-    local scale_random = math.random(0.5, 2.00)
-
-    -- Get random velocity
+    -- Get random velocity and size. We use size also for scale
+    -- As they are directly correlated.
     local v_random = math.random(100, self.max_v)
+    local size_random = math.random(0.5, 2.00)
 
     -- Spawn enemy at coordinates
-    local enemy = Enemy:new(x_random, y_random, scale_random, scale_random, v_random, 0)
+    local enemy = Enemy:new(x_random, y_random, size_random, v_random, 0, 1)
     table.insert(self.enemies, 1, enemy)
 end
 

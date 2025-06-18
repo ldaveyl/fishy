@@ -4,6 +4,7 @@ local EnemySpawner = require "src.systems.enemy_spawner"
 local HC = require "lib.HC"
 local Hearts = require "src.ui.hearts"
 local Player = require "src.entities.player"
+local Score = require "src.ui.score"
 local Utils = require "src.utils"
 
 local Play = {}
@@ -13,19 +14,24 @@ function Play:new()
     local play = {}
 
     -- Create player
-    play.player = Player:new(WINDOW_WIDTH / 2, WINDOW_HEIGHT / 2, 1, 1, 0, 0, 1)
+    play.player = Player:new(WINDOW_WIDTH / 2, WINDOW_HEIGHT / 2, 2, 0, 0, 1)
 
-    -- Add cooldown bar ui
+    -- Add ui
     play.cooldown_bar = CooldownBar:new()
-
-    -- Add health bar ui
     play.hearts = Hearts:new()
+    play.score = Score:new()
 
     -- Create enemy spawner
     local spawn_margin = 0.05 * WINDOW_HEIGHT -- Margin from top and bottom of screen
     play.enemy_spawner = EnemySpawner:new(40, spawn_margin, 20,
         WINDOW_HEIGHT - (2 * spawn_margin), 0.5, 3.0,
         Enemy, 200)
+
+    -- Keep track of enemies to remove
+    play.enemies_to_remove = {}
+
+    -- Add backreference to player
+    play.player.owner = play
 
     setmetatable(play, self)
     self.__index = self
@@ -58,8 +64,23 @@ function Play:update(dt)
     -- Update hearts UI
     self.hearts.current_value = self.player.hearts
 
+    -- Remove enemies and their colliders
+    for _, enemy in ipairs(self.enemies_to_remove) do
+        HC.remove(enemy.collider.hc)
+
+        -- Remove from enemies table
+        for i = #self.enemy_spawner.enemies, 1, -1 do
+            if self.enemy_spawner.enemies[i] == enemy then
+                table.remove(self.enemy_spawner.enemies, i)
+                break
+            end
+        end
+    end
+
     -- If no lives are left, game over
     if self.player.hearts == 0 then
+        if DEBUG then print("No hearts left. Game Over.") end
+
         -- Clean player environment
         self:clean()
 
@@ -86,6 +107,7 @@ function Play:draw()
     -- Draw UI
     self.cooldown_bar:draw()
     self.hearts:draw()
+    self.score:draw()
 end
 
 function Play:clean()

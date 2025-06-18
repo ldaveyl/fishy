@@ -4,7 +4,7 @@ local Input = require "src.systems.input"
 function love.load()
     -- Settings
     DEBUG = true
-    SPAWN_ENEMIES = false
+    SPAWN_ENEMIES = true
     MOVE_THROUGH_BORDERS = true
 
     -- Seed math.random (otherwise random numbers are the same for every game)
