@@ -18,8 +18,8 @@ function love.load()
 
     -- Create a new game
     local Play = require "src.states.play"
-    GAME = Game:new(Play:new())
-    -- GAME = Game:new()
+    -- GAME = Game:new(Play:new())
+    GAME = Game:new()
 end
 
 function love.update(dt)

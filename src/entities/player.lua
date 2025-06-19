@@ -216,17 +216,18 @@ end
 
 function Player:draw()
     love.graphics.setColor(1, 1, 1, 1)
-    self.collider.hc:draw()
-    love.graphics.draw(
-        Player.img,
-        self.x,
-        self.y,
-        0,
-        self.sx,
-        self.sy,
-        self.img:getWidth() / 2,
-        self.img:getHeight() / 2
-    )
+    if DEBUG then self.collider.hc:draw() end
+    -- love.graphics.polygon("line", self.collider.collision_polygon)
+    -- love.graphics.draw(
+    --     Player.img,
+    --     self.x,
+    --     self.y,
+    --     0,
+    --     self.sx,
+    --     self.sy,
+    --     self.img:getWidth() / 2,
+    --     self.img:getHeight() / 2
+    -- )
 end
 
 return Player

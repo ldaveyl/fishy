@@ -44,6 +44,7 @@ end
 
 function Enemy:draw()
     love.graphics.setColor(1, 0, 0, 1)
+    if DEBUG then self.collider.hc:draw() end
     love.graphics.draw(
         Enemy.img,
         self.x,
@@ -54,8 +55,6 @@ function Enemy:draw()
         self.img:getWidth() / 2,
         self.img:getHeight() / 2
     )
-
-    self.collider.hc:draw()
 end
 
 return Enemy
