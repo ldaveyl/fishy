@@ -9,7 +9,23 @@ local Player = {}
 
 setmetatable(Player, { __index = Entity })
 
-Player.img = love.graphics.newImage("assets/images/fish2.png")
+local function image_with_offset(image_path, x_offset, y_offset)
+    return {
+        image = love.graphics.newImage(image_path),
+        x_offset = x_offset,
+        y_offset = y_offset
+    }
+end
+
+local x_offset = 150
+local y_offset = -70
+
+Player.images = {
+    image_with_offset("assets/images/animations/player/idle/1.png", x_offset, y_offset),
+    image_with_offset("assets/images/animations/player/idle/2.png", x_offset, y_offset),
+    image_with_offset("assets/images/animations/player/idle/3.png", x_offset, y_offset),
+}
+Player.animation_cycle_time = 0.05
 Player.size_gain_multiplier = 0.1
 Player.score_gain_multiplier = 100
 
@@ -22,6 +38,7 @@ function Player:new(x, y, size, vx, vy, hearts)
         vy = vy,
         hearts = hearts,
     }
+    player.image_size = 0.188 * player.size
 
     -- Scale is size
     player.sx = size
@@ -29,19 +46,20 @@ function Player:new(x, y, size, vx, vy, hearts)
 
     -- Create collider
     player.collider = Collider:new("Player")
-    player.collider.hc:scale(player.sx)
+    player.collider.hc:scale(size)
 
     -- Add additional properties
-    player.max_v = 5000           -- Max velocity
-    player.max_v_boost = 2000     -- Max velocity during boost
-    player.acceleration = 2000    -- Acceleration
-    player.friction = 2           -- Friction
-    player.boost_time = 0.1       -- Boost time
-    player.boost_time_cd = 3      -- Boost time cooldown
-    player.can_use_boost = true   -- Track if boost can be used
-    player.is_invinsible = false  -- Can player take damage
-    player.invinsibility_time = 2 -- How long is player invibsible after taking damage
-    player.score = 0              -- Score for highscores
+    player.max_v = 5000            -- Max velocity
+    player.max_v_boost = 2000      -- Max velocity during boost
+    player.acceleration = 2000     -- Acceleration
+    player.friction = 2            -- Friction
+    player.boost_time = 0.1        -- Boost time
+    player.boost_time_cd = 3       -- Boost time cooldown
+    player.can_use_boost = true    -- Track if boost can be used
+    player.is_invinsible = false   -- Can player take damage
+    player.invinsibility_time = 2  -- How long is player invibsible after taking damage
+    player.score = 0               -- Score for highscores
+    player.current_image_index = 1 -- Current image to use for animation
 
     -- Create timer for boost cooldown
     player.boost_cd_timer = Timer:new(
@@ -69,6 +87,16 @@ function Player:new(x, y, size, vx, vy, hearts)
             player.is_invinsible = false
         end
     )
+
+    -- Create timer for animation (should already start)
+    player.animation_timer = Timer:new(
+        Player.animation_cycle_time,
+        function()
+            player.current_image_index = (player.current_image_index + 1) % #Player.images + 1
+            player.animation_timer:start()
+        end
+    )
+    player.animation_timer:start()
 
     setmetatable(player, self)
     self.__index = self
@@ -131,25 +159,24 @@ function Player:update(dt)
         self.vx = Utils.sign(self.sx) * self.max_v_boost
     end
 
-    -- Update position
-    self:update_position(dt)
-
-    -- Update collider
-    self.collider.hc:moveTo(self.x, self.y)
-
     if flip == true then
         -- Update scale
         self.sx = -1 * self.sx
 
         -- flip collider horizontally
         self.collider:flip_x()
-        self.collider.hc:scale(math.abs(self.sx))
+        self.collider.hc:scale(math.abs(self.size))
     end
+
+    -- Update position
+    self:update_position(dt)
+
+    -- Update collider
+    self.collider.hc:moveTo(self.x, self.y)
 
     -- Check for collisions
     for collider, _ in pairs(HC.collisions(self.collider.hc)) do
         if collider.type == "Enemy" and not self.is_invinsible then
-            print("enemy size: " .. collider.owner.size)
             if self.size >= collider.owner.size then
                 -- Mark enemy for removal
                 table.insert(self.owner.enemies_to_remove, collider.owner)
@@ -177,9 +204,10 @@ function Player:update(dt)
         end
     end
 
-    -- Clamp player to screen bounds and reset velocity
-    local half_player_width = math.abs(self.sx) * Player.img:getWidth() / 2
-    local half_player_height = math.abs(self.sy) * Player.img:getHeight() / 2
+    -- Clamp player to screen bounds and reset velocity based on collider
+    local bound_left, bound_top, bound_right, bound_bottom = self.collider.hc:bbox()
+
+    local half_player_width = (bound_right - bound_left) / 2
 
     -- Left and right borders
     -- Player teleports to other side if specified
@@ -200,11 +228,11 @@ function Player:update(dt)
     end
 
     -- Upper and lower borders
-    if self.y < half_player_height then
-        self.y = half_player_height
+    if bound_top < 0 then
+        self.y = self.y - bound_top
         self.vy = 0
-    elseif self.y > WINDOW_HEIGHT - half_player_height then
-        self.y = WINDOW_HEIGHT - half_player_height
+    elseif bound_bottom > WINDOW_HEIGHT then
+        self.y = self.y + WINDOW_HEIGHT - bound_bottom
         self.vy = 0
     end
 
@@ -212,22 +240,36 @@ function Player:update(dt)
     self.boost_active_timer:update(dt)
     self.boost_cd_timer:update(dt)
     self.invinsibility_timer:update(dt)
+    self.animation_timer:update(dt)
 end
 
 function Player:draw()
-    love.graphics.setColor(1, 1, 1, 1)
-    if DEBUG then self.collider.hc:draw() end
-    -- love.graphics.polygon("line", self.collider.collision_polygon)
-    -- love.graphics.draw(
-    --     Player.img,
-    --     self.x,
-    --     self.y,
-    --     0,
-    --     self.sx,
-    --     self.sy,
-    --     self.img:getWidth() / 2,
-    --     self.img:getHeight() / 2
-    -- )
+    local current_image = Player.images[self.current_image_index]
+    love.graphics.setColor(1, 0, 0, 1)
+    love.graphics.draw(
+        current_image.image,
+        self.x,
+        self.y,
+        0,
+        Utils.sign(self.sx) * self.image_size,
+        Utils.sign(self.sy) * self.image_size,
+        current_image.image:getWidth() / 2 + current_image.x_offset,
+        current_image.image:getHeight() / 2 + current_image.y_offset
+    )
+    if DEBUG then
+        self.collider.hc:draw()
+        local cx, cy = self.collider.hc:center()
+        love.graphics.circle("fill", cx, cy, 8)         -- small red dot at center
+        love.graphics.setColor(0, 0, 0, 1)
+        love.graphics.circle("fill", self.x, self.y, 4) -- small black dot at center
+
+        -- Draw bounding box
+        local bound_left, bound_top, bound_right, bound_bottom = self.collider.hc:bbox()
+        love.graphics.rectangle('line', bound_left, bound_bottom, bound_right - bound_left, bound_top - bound_bottom)
+
+        love.graphics.setColor(0, 1, 0, 1)
+        love.graphics.circle("fill", (bound_left + bound_right) / 2, (bound_bottom + bound_top) / 2, 8) -- small green dot at center
+    end
 end
 
 return Player

@@ -5,7 +5,7 @@ local Enemy = {}
 
 setmetatable(Enemy, { __index = Entity })
 
-Enemy.img = love.graphics.newImage("assets/images/fish2.png")
+Enemy.img = love.graphics.newImage("assets/images/fishy3.png")
 
 function Enemy:new(x, y, size, vx, vy, hearts)
     local enemy = {

@@ -16,10 +16,6 @@ function Timer:start()
     self.time_left = self.duration
 end
 
-function Timer:stop()
-    self.active = false
-end
-
 function Timer:update(dt)
     if self.active and self.time_left > 0 then
         self.time_left = self.time_left - dt
@@ -28,11 +24,6 @@ function Timer:update(dt)
             self.on_finish()
         end
     end
-end
-
-function Timer:reset()
-    self.time_left = self.duration
-    self.active = true
 end
 
 return Timer

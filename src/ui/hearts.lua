@@ -9,7 +9,7 @@ function Hearts:new()
         current_value = 3,
         max_value = 3,
         padding = 50,
-        img = love.graphics.newImage("assets/images/fish2.png")
+        img = love.graphics.newImage("assets/images/fishy3.png")
     }
     setmetatable(hearts, self)
     self.__index = self
