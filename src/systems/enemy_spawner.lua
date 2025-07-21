@@ -15,6 +15,7 @@ function EnemySpawner:new(x, y, width, height, min_spawn_rate, max_spawn_rate, e
         max_v = max_v,
         enemies = {},
     }
+    -- enemy_spawner.grid = generate_poisson(x, y, width, height)
 
     -- Create spawn timer
     enemy_spawner.spawn_timer = RandomTimer:new(0.5, 3, function()
@@ -54,6 +55,14 @@ function EnemySpawner:draw()
     -- Show spawn region
     love.graphics.rectangle("fill", self.x, self.y, self.width, self.height)
     love.graphics.reset()
+
+    love.graphics.setColor(0, 0, 0, 1)
+    -- for i = 1, #self.grid do
+    --     if self.grid[i] ~= nil then
+    --         love.graphics.circle("fill", self.x + self.grid[i].x, self.y + self.grid[i].y, 4)
+    --     end
+    -- end
+    love.graphics.setColor(1, 1, 1, 1)
 end
 
 return EnemySpawner

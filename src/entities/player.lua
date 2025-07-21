@@ -28,6 +28,7 @@ Player.images = {
 Player.animation_cycle_time = 0.05
 Player.size_gain_multiplier = 0.1
 Player.score_gain_multiplier = 100
+Player.image_size_multiplier = 0.188
 
 function Player:new(x, y, size, vx, vy, hearts)
     local player = {
@@ -38,7 +39,7 @@ function Player:new(x, y, size, vx, vy, hearts)
         vy = vy,
         hearts = hearts,
     }
-    player.image_size = 0.188 * player.size
+    player.image_size = Player.image_size_multiplier * player.size
 
     -- Scale is size
     player.sx = size
@@ -185,6 +186,7 @@ function Player:update(dt)
                 local gain = collider.owner.size * Player.size_gain_multiplier
                 local original_size = self.size
                 self.size = self.size + gain
+                self.image_size = Player.image_size_multiplier * self.size
                 self.collider.hc:scale((original_size + gain) / original_size)
 
                 -- Update scale
@@ -263,7 +265,6 @@ function Player:draw()
         love.graphics.setColor(0, 0, 0, 1)
         love.graphics.circle("fill", self.x, self.y, 4) -- small black dot at center
 
-        -- Draw bounding box
         local bound_left, bound_top, bound_right, bound_bottom = self.collider.hc:bbox()
         love.graphics.rectangle('line', bound_left, bound_bottom, bound_right - bound_left, bound_top - bound_bottom)
 

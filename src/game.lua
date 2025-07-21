@@ -13,12 +13,10 @@ function Game:new(state)
 end
 
 function Game:update(dt)
-    -- Update current state
     self.state:update(dt)
 end
 
 function Game:draw()
-    -- Draw game
     self.state:draw()
 end
 

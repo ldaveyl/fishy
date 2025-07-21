@@ -13,22 +13,17 @@ function CooldownBar:new()
 end
 
 function CooldownBar:update(current_value)
-    -- Clamp CooldownBar values
     self.current_value = Utils.clamp(current_value, 0, self.max_value)
 end
 
 function CooldownBar:draw()
-    -- Draw background
-    love.graphics.setColor(0.5, 0.5, 0.5) -- Cooldown bar bg
+    love.graphics.setColor(0.5, 0.5, 0.5)
     love.graphics.rectangle("fill", self.x, self.y, self.width, self.height)
 
-    -- Calculate current width
     local frac = self.current_value / self.max_value
     local current_width = frac * self.width
 
-    -- Draw CooldownBar bar
-    -- local canvas = love.graphics.newCanvas(width, height)
-    love.graphics.setColor(1, 1, 1) -- Cooldown bar color
+    love.graphics.setColor(1, 1, 1)
     love.graphics.rectangle("fill", self.x, self.y, current_width, self.height)
 end
 

@@ -20,13 +20,10 @@ function Play:new()
     play.score = Score:new()
 
     local spawn_margin = 0.05 * WINDOW_HEIGHT -- Margin from top and bottom of screen
-    play.enemy_spawner = EnemySpawner:new(40, spawn_margin, 20,
+    play.enemy_spawner = EnemySpawner:new(40, spawn_margin, 100,
         WINDOW_HEIGHT - (2 * spawn_margin), 0.5, 3.0,
         Enemy, 200)
-
     play.enemies_to_remove = {}
-
-    -- Add backreference to player
     play.player.owner = play
 
     setmetatable(play, self)
@@ -69,10 +66,8 @@ function Play:update(dt)
     if self.player.hearts == 0 then
         if DEBUG then print("No hearts left. Game Over.") end
 
-        -- Clean player environment
         self:clean()
 
-        -- Switch to game over state
         local GameOver = require "src.states.game_over"
         GAME:change_state(GameOver:new())
     end

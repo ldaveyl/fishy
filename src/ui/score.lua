@@ -20,7 +20,10 @@ function Score:increase_score(score_increase)
 end
 
 function Score:draw()
+    love.graphics.setColor(0, 0, 0, 1)
+    love.graphics.setFont(FONT)
     love.graphics.print(self.score, self.x, self.y, 0, self.sx, self.sy)
+    love.graphics.setColor(1, 1, 1, 1)
 end
 
 return Score

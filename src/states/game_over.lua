@@ -36,14 +36,11 @@ function GameOver:new()
 end
 
 function GameOver:update(_)
-    -- Detect if the left mouse button was pressed
     local mouse_pressed = Input.mouse_was_pressed(1)
 
-    -- Update all buttons
     self.restart_button:update(mouse_pressed)
     self.main_menu_button:update(mouse_pressed)
 
-    -- Button actions
     if self.restart_button.pressed then
         local Play = require "src.states.play"
         GAME = Game:new(Play:new())
@@ -52,17 +49,14 @@ function GameOver:update(_)
         GAME = Game:new(Menu:new())
     end
 
-    -- Clear mouse pressed
     Input.clear_mouse_pressed(1)
 end
 
 function GameOver:key_pressed(key)
-    -- Send key presses to input
     Input.key_pressed(key)
 end
 
 function GameOver:draw()
-    -- Draw buttons
     self.restart_button:draw()
     self.main_menu_button:draw()
 end
